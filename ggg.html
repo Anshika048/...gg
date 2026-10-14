@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy 21st Birthday Gannu | With All My Heart</title>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    :root {
+      --bg: #090c10;
+      --card-bg: rgba(13, 20, 32, 0.88);
+      --accent-blue: #00b4d8;
+      --glow-blue: #0077b6;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --heart: #ff4d6d;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+    }
+
+    /* Ambient animated starry glow */
+    .bg-lights {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at 20% 20%, rgba(0, 180, 216, 0.15) 0%, transparent 40%),
+                  radial-gradient(circle at 80% 80%, rgba(2, 62, 138, 0.25) 0%, transparent 45%);
+      z-index: 0;
+    }
+
+    /* Floating Hearts */
+    .floating-heart {
+      position: fixed;
+      color: rgba(255, 77, 109, 0.4);
+      user-select: none;
+      pointer-events: none;
+      animation: floatUp linear infinite;
+      z-index: 1;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(105vh) scale(0.6);
+        opacity: 0;
+      }
+      20% { opacity: 0.8; }
+      80% { opacity: 0.8; }
+      100% {
+        transform: translateY(-10vh) scale(1.1);
+        opacity: 0;
+      }
+    }
+
+    /* Racing Sports Car Animation */
+    .track {
+      position: fixed;
+      bottom: 12px;
+      left: 0;
+      width: 100%;
+      height: 35px;
+      border-bottom: 2px dashed rgba(0, 180, 216, 0.3);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .car {
+      position: absolute;
+      font-size: 26px;
+      bottom: 2px;
+      animation: driveCar 9s linear infinite;
+      filter: drop-shadow(0 0 6px var(--accent-blue));
+    }
+
+    @keyframes driveCar {
+      0% { left: -10%; transform: scaleX(1); }
+      100% { left: 110%; transform: scaleX(1); }
+    }
+
+    /* Audio Toggle Button */
+    .music-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(13, 20, 32, 0.9);
+      border: 1px solid var(--accent-blue);
+      color: var(--accent-blue);
+      padding: 10px 16px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      z-index: 100;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .music-btn:hover {
+      background: var(--accent-blue);
+      color: #000;
+      box-shadow: 0 0 15px rgba(0, 180, 216, 0.6);
+    }
+
+    /* Presentation Container */
+    .slider-card {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 580px;
+      min-height: 580px;
+      background: var(--card-bg);
+      border: 1px solid rgba(0, 180, 216, 0.25);
+      border-radius: 24px;
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 180, 216, 0.15);
+      backdrop-filter: blur(12px);
+      padding: 2.2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .slide {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      animation: fadeIn 0.6s ease forwards;
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .tag {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      color: var(--accent-blue);
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+    }
+
+    h2 {
+      font-size: 1.85rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #fff, var(--accent-blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p {
+      color: #cbd5e1;
+      font-size: 1rem;
+      line-height: 1.7;
+      margin-bottom: 1.2rem;
+    }
+
+    .poetry {
+      font-family: 'Caveat', cursive;
+      font-size: 1.85rem;
+      color: #90e0ef;
+      line-height: 1.4;
+      margin: 1rem 0;
+      text-shadow: 0 0 10px rgba(0, 180, 216, 0.3);
+    }
+
+    /* Photo Frame Styling */
+    .photo-wrapper {
+      position: relative;
+      width: 250px;
+      height: 270px;
+      border-radius: 18px;
+      margin: 1rem auto;
+      overflow: hidden;
+      border: 3px solid var(--accent-blue);
+      box-shadow: 0 8px 25px rgba(0, 180, 216, 0.35);
+    }
+
+    .photo-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .photo-wrapper:hover img {
+      transform: scale(1.05);
+    }
+
+    .nickname-pill {
+      display: inline-block;
+      background: rgba(0, 180, 216, 0.15);
+      border: 1px solid var(--accent-blue);
+      color: #90e0ef;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Navigation & Controls */
+    .nav-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-top: 1.8rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      transition: 0.3s;
+    }
+
+    .dot.active {
+      background: var(--accent-blue);
+      width: 22px;
+      border-radius: 6px;
+      box-shadow: 0 0 10px var(--accent-blue);
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #0077b6, #00b4d8);
+      border: none;
+      color: #040810;
+      padding: 10px 22px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 15px rgba(0, 180, 216, 0.4);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 180, 216, 0.7);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #94a3b8;
+      box-shadow: none;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      box-shadow: none;
+    }
+
+    /* Invite box for TG anime */
+    .invite-box {
+      background: rgba(0, 119, 182, 0.12);
+      border: 1px dashed var(--accent-blue);
+      border-radius: 14px;
+      padding: 14px;
+      margin: 1rem 0;
+      font-size: 0.9rem;
+      text-align: left;
+    }
+
+    .telegram-link {
+      display: inline-block;
+      margin-top: 8px;
+      color: #00e5ff;
+      text-decoration: underline;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .highlight-heart {
+      color: var(--heart);
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-lights"></div>
+
+  <!-- Music toggle -->
+  <button class="music-btn" id="musicToggle" onclick="toggleTune()">
+    <span id="musicIcon">🎵</span> Play Soft Tune
+  </button>
+
+  <!-- Racing Car track at the bottom -->
+  <div class="track">
+    <div class="car">🏎️💨</div>
+  </div>
+
+  <div class="slider-card">
+
+    <!-- Slide 1: Welcome & Birthday Intro -->
+    <div class="slide active">
+      <span class="tag">15th October 2026 • 21st Milestone</span>
+      <h2>Happy 21st, Ganpat! 🎂</h2>
+      <div class="nickname-pill">To my Gannu (and my sweet little mandak 🐸)</div>
+      
+      <div class="photo-wrapper">
+        <img src="photo1.jpg" alt="Ganpat Parihar">
+      </div>
+
+      <p>
+        Today you turn 21. Even with all the storms, silences, and distance between us, I couldn't let this day pass without honoring you.
+      </p>
+    </div>
+
+    <!-- Slide 2: The Poetry of Heartache -->
+    <div class="slide">
+      <span class="tag">Unspoken Truths</span>
+      <h2>Missing You In Pieces</h2>
+      
+      <div class="poetry">
+        "I can't la_gh without u...<br>
+        I can't s_nshine without u."
+      </div>
+
+      <div class="photo-wrapper">
+        <img src="photo4.jpg" alt="Ganpat mirror selfie">
+      </div>
+
+      <p>
+        Fill in the blanks and you will find you—the only missing piece. You used to bring both the laughter and the warmth into my world.
+      </p>
+    </div>
+
+    <!-- Slide 3: The Memories & The Joke -->
+    <div class="slide">
+      <span class="tag">Memories & Laughs</span>
+      <h2>My Favourite Dummy 🧸</h2>
+
+      <div class="photo-wrapper">
+        <img src="photo3.jpg" alt="Ganpat at Krishna statue">
+      </div>
+
+      <p>
+        Remember how I called you my mandak? Just silly nicknames that only made sense to us. You’ll always be my big dummy, no matter how distant our paths become.
+      </p>
+    </div>
+
+    <!-- Slide 4: Respecting Your Space (The Gift) -->
+    <div class="slide">
+      <span class="tag">The Hardest Gift</span>
+      <h2>If It Brings You Peace...</h2>
+
+      <div class="photo-wrapper">
+        <img src="photo2.jpg" alt="Ganpat on scooter">
+      </div>
+
+      <p>
+        What I truly want is to be with you. But I respect you more than my own wishes. If what you want is silence, I won't ever come back or reach out again. If you don't want to talk, I won't talk. That peace will be my birthday gift to you.
+      </p>
+    </div>
+
+    <!-- Slide 5: The Anime Movie Plan & Invitation -->
+    <div class="slide">
+      <span class="tag">A Quiet Invitation</span>
+      <h2>One Gentle Moment</h2>
+      <p>
+        I had planned for us to watch an anime movie together today between <strong>3:00 PM – 5:00 PM</strong>.
+      </p>
+
+      <div class="invite-box">
+        <div><strong>📺 Telegram Movie Plan:</strong></div>
+        <p style="margin: 4px 0; font-size: 0.85rem; color: #94a3b8;">
+          If your heart feels like it, you can drop into the group. But if you don't want that, please just ignore this message completely. No pressure, no obligations.
+        </p>
+        <a class="telegram-link" href="https://t.me/" target="_blank">🔗 Open Telegram Group</a>
+      </div>
+
+      <p style="font-size: 0.85rem; color: #94a3b8;">
+        Whether you come or not, I will always wish for your happiness.
+      </p>
+    </div>
+
+    <!-- Slide 6: Eternal Love & Grand Finale -->
+    <div class="slide">
+      <span class="tag">Always & Forever</span>
+      <h2 style="font-size: 2.1rem;">Big Birthday, Gannu! 💙</h2>
+      
+      <div style="font-size: 3.5rem; margin: 0.6rem 0;">🎂✨🧸</div>
+
+      <div class="poetry" style="font-size: 1.5rem; color: #00e5ff;">
+        "Even if you don't love me,<br>I still love you. I'll love you forever."
+      </div>
+
+      <p style="margin-top: 1rem; color: #cbd5e1;">
+        No matter where life leads you in your 21st year and beyond, remember someone is always praying for your smile and safety.
+      </p>
+
+      <div style="margin-top: 10px; font-weight: 600; color: #38bdf8;">
+        With all the love I have, <br>
+        <span style="font-family: 'Caveat', cursive; font-size: 1.8rem;">— Annu (Anshu Swami)</span>
+      </div>
+    </div>
+
+    <!-- Navigation buttons -->
+    <div class="nav-controls">
+      <button class="btn btn-secondary" id="prevBtn" onclick="changeSlide(-1)">Back</button>
+      <div class="dots" id="dotsContainer"></div>
+      <button class="btn" id="nextBtn" onclick="changeSlide(1)">Next</button>
+    </div>
+
+  </div>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const dotsContainer = document.getElementById('dotsContainer');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    // Generate Dots
+    slides.forEach((_, i) => {
+      const dot = document.createElement('div');
+      dot.classList.add('dot');
+      if (i === 0) dot.classList.add('active');
+      dotsContainer.appendChild(dot);
+    });
+    const dots = document.querySelectorAll('.dot');
+
+    function updateSlide() {
+      slides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
+      dots.forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+
+      prevBtn.style.visibility = currentSlide === 0 ? 'hidden' : 'visible';
+      
+      if (currentSlide === slides.length - 1) {
+        nextBtn.innerText = "Celebrate 🎉";
+        triggerConfetti();
+      } else {
+        nextBtn.innerText = "Next";
+      }
+    }
+
+    function changeSlide(direction) {
+      if (currentSlide === slides.length - 1 && direction === 1) {
+        triggerConfetti();
+        return;
+      }
+      currentSlide = Math.max(0, Math.min(slides.length - 1, currentSlide + direction));
+      updateSlide();
+    }
+
+    // Confetti burst
+    function triggerConfetti() {
+      confetti({
+        particleCount: 70,
+        spread: 60,
+        origin: { y: 0.7 },
+        colors: ['#00b4d8', '#0077b6', '#ffffff', '#ff4d6d']
+      });
+    }
+
+    // Floating background hearts
+    function createHearts() {
+      for (let i = 0; i < 15; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'floating-heart';
+        heart.innerHTML = '💙';
+        heart.style.left = Math.random() * 95 + 'vw';
+        heart.style.animationDuration = (6 + Math.random() * 6) + 's';
+        heart.style.animationDelay = (Math.random() * 5) + 's';
+        heart.style.fontSize = (14 + Math.random() * 16) + 'px';
+        document.body.appendChild(heart);
+      }
+    }
+    createHearts();
+
+    // Soft Ambient Synthesizer Music (No external mp3 link issues)
+    let audioCtx = null;
+    let isPlaying = false;
+    let melodyTimer = null;
+
+    function toggleTune() {
+      const musicBtn = document.getElementById('musicToggle');
+      if (!isPlaying) {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        playMelody();
+        isPlaying = true;
+        musicBtn.innerHTML = '<span>⏸️</span> Pause Tune';
+      } else {
+        clearInterval(melodyTimer);
+        isPlaying = false;
+        musicBtn.innerHTML = '<span>🎵</span> Play Soft Tune';
+      }
+    }
+
+    function playNote(freq, start, duration) {
+      if (!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, start);
+
+      gain.gain.setValueAtTime(0.001, start);
+      gain.gain.exponentialRampToValueAtTime(0.08, start + 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start(start);
+      osc.stop(start + duration);
+    }
+
+    function playMelody() {
+      // Soft gentle pentatonic chords
+      const notes = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
+      let step = 0;
+
+      melodyTimer = setInterval(() => {
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const now = audioCtx.currentTime;
+        const note = notes[step % notes.length];
+        playNote(note, now, 1.8);
+        if (step % 2 === 0) {
+          playNote(note / 2, now, 2.5);
+        }
+        step++;
+      }, 750);
+    }
+
+    updateSlide();
+  </script>
+</body>
+</html>
